@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QTextCodec>
 #include "activeword.h"
 #include "activeexcel.h"
 #include "datastorage.h"
@@ -85,7 +86,7 @@ void MainWindow::startOperation(){
     dataStorage storage;
     QString partNumberString;
     //В каждом документе в первом столбце есть #, после которой идут элементы
-    for (int i = 1; i < 100 ; i++){
+    for (int i = 1; i < 50 ; i++){
         if (excel.sheetCellInsert(sheet, data, i, 1)){
             if (data.toString() == "#"){
                 line = i;
@@ -113,7 +114,7 @@ void MainWindow::startOperation(){
         else  mesOut("Ошибка обработки BOM данных!") ;
     }
     //Чтение данных
-    for(int i = line + 1; i < 50 ; i++){
+    for(int i = line + 1; i < 500 ; i++){
         QVariant refN, partNumberN, qtyN, manufacturerN, descriptionN ;
         if (excel.sheetCellInsert(sheet, data, i, refDez))
             refN = data;
@@ -153,8 +154,213 @@ partNumberString.clear();
     }
     excel.workbookClose(ex1);
      QMap <QString, QList<TData> > data1 = storage.ret();
-    int i;
-    i++;
+
+     //Чтение известных групп
+     QString  str;
+     QFile file("Названия групп.txt");
+     QTextCodec::codecForName("CP1251");
+     if(file.open(QIODevice::ReadOnly |QIODevice::Text)){
+         while (!file.atEnd()){
+             QByteArray line = file.readLine();
+             QTextCodec *codec = QTextCodec::codecForName("CP1251");
+             str += codec->toUnicode(line);
+         }
+     }
+     else qDebug()<< "don't open file";
+     QStringList splitStr = str.split("\n");
+     QMap<QString, QString> tem;
+     foreach (auto st, splitStr) {
+         QStringList split = st.split("-");
+         tem[split[0]] = split[1];
+     }
+
+     ///
+     /// \brief allBom
+
+
+
+QMap <QString, QList<TData> >  allBom;
+     foreach (auto key1, data1.keys()) {
+         bool keyFound = false;
+         foreach (auto key2, tem.keys()) {
+             if(key1 == key2){
+                 keyFound = true;
+                 allBom[tem[key2]]; //копирую ключ
+                 //копирую данные
+                 allBom[tem[key2]].append( data1[key2]);
+                 break;
+             }
+         }
+
+         if(keyFound == false){
+             allBom["Прочие"];
+             allBom["Прочие"].append( data1[key1]);
+             }
+         }
+
+
+
+
+     //теперь это дело надо перевести в QList<QStringList>  и засандалить в Word таблицу
+     QList<QStringList> tableDat;
+int j = 20; // число берется из gui
+     foreach (auto key, allBom.keys()) {
+         QStringList per;
+         per << "" << "" << "" << ""  << "" << "" << "";
+         tableDat << per;
+         per.clear();
+         per << "" << "" << "" << ""  << key << "" << "";
+         tableDat << per;
+         per.clear();
+         per << "" << "" << "" << ""  << "" << "" << "";
+         tableDat << per;
+         per.clear();
+         //i == кол-во TData
+         for(int i = 0; i < allBom[key].count(); i++, j+=2){
+             per << "" << "" ;
+             per << QString::number(j);
+             per << "" ;
+             per << allBom[key][i].part;
+             per << QString::number(allBom[key][i].counts);
+             per << allBom[key][i].notes;
+             tableDat << per;
+             per.clear();
+             per << "" << "" << "" << ""  << "" << "" << "";
+             tableDat << per;
+             per.clear();
+           }
+}
+//
+     //
+     QList<QStringList> varList;// = tableDat; // шоб не похерить данные
+// в 6 и 4 ячейках слов должно быть не больше 32 и 18 соответственно
+//иначе word будет увеливать размер ячеек.
+     for(int i = 0; i < tableDat.count(); i++){ //--------------------------------------------------------------------begin
+     QString text = tableDat[i].at(6);
+     QString note = tableDat[i].at(4);
+     if(text == ""  || (text.count() < 18)){
+         if(note == ""  || (note.count() < 32)){
+          varList.append(tableDat[i]);
+             continue;
+         }
+     }
+     QString count = tableDat[i].at(5); // кол-во компоненов
+     QString num = tableDat[i].at(2);   // порядковый номер в спецификации
+      QStringList textL, textLout, noteL, noteLout;
+      textL = text.split(" ");
+      noteL = note.split(" ");
+      textLout.append("");// заполняю пустыми значениями, чтобы можно было обратиться по индексу
+      noteLout.append("");
+      for(int i = 0, j = 0; i < textL.count(); i++){
+
+          if((textLout[j].count() + textL[i].count()) < 18){
+
+              textLout[j] += textL[i];
+              continue;
+          }
+          else{
+              textLout.append("");
+              textLout[++j] += textL[i];
+          }
+
+      }
+      for(int i = 0, j = 0; i < noteL.count(); i++){
+          if((noteLout[j].count() + noteL[i].count()) < 32){
+
+              noteLout[j] += noteL[i];
+              continue;
+          }
+          else{
+              noteLout.append("");
+              noteLout[++j] += noteL[i];
+          }
+
+      }
+      QList<QStringList> newline;
+      QStringList per;
+      //Где больше строк?
+      int countNote = noteLout.count();
+      int countText = textLout.count();
+      if(countNote > countText){
+        for(int i = 0; i < noteLout.count(); i++ ){
+            if(i != 0)
+                per << "" << "" <<"" << "";
+            if(i == 0)
+                per << "" << "" << num << "";
+            per << noteLout[i];
+            if( i == 0)
+                per << count;
+            if( i != 0)
+                per << "";
+            if(i < countText)
+                per <<textLout[i];
+            if(i >= countText)
+                per << "";
+            newline << per;
+            per.clear();
+        }
+      }
+      else{
+          for(int i = 0; i < textLout.count(); i++ ){
+
+              //1-4
+              if(i != 0)
+                      per << "" << "" <<"" << "";
+              if(i == 0)
+                      per << "" << "" << num << "";
+              //5
+              if(i < countNote)
+                  per << noteLout[i];
+              if(i >= countNote)
+                  per << "";
+              //6
+              if( i == 0)
+                  per << count;
+              if( i != 0)
+                  per << "";
+              //7
+              per <<textLout[i];
+              newline << per;
+              per.clear();
+          }
+        }
+
+
+//исходную строку надо заменить на стройки newLine
+    varList.append(newline);
+
+
+
+      int jj;
+      jj++;
+
+     }//----------------------------------------------------------------------------------------------------------------end
+
+     // делаю первый и второй лист с пустыми полями
+     QStringList space;
+     space << "" << "" << "" <<"" << "" << "" << "";
+     for(int i = 0; i < 55; i++)
+     varList.prepend(space);
+
+
+
+
+     //Заполняю документ пустой таблицей до конца
+        int count = varList.count();
+        double z = floor((count - 25)/30);
+        int x = count - ( 25 + z * 30);
+        int lineAdd = 30 - x;
+        for (int i = 0; i < lineAdd; i++)
+            varList.append(space);
+
+     QStringList listLabel;
+    int ret = word.tableGetLabels(1, 2, listLabel);
+
+
+    ret = word.tableFill(varList,listLabel,1,2) ;
+word.setVisible();
+     int ii;
+     ii++;
 }
 
 void MainWindow::load(){
