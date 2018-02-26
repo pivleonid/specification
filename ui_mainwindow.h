@@ -41,12 +41,13 @@ public:
     QGridLayout *gridLayout_2;
     QGroupBox *groupBox;
     QGridLayout *gridLayout;
-    QLabel *label_3;
-    QLabel *labelName;
-    QLineEdit *lineEditName;
-    QPushButton *pushButtonPath;
     QPushButton *pushButtonLoad;
+    QLabel *labelName;
+    QPushButton *pushButtonPath;
     QLabel *labelPath;
+    QSpacerItem *horizontalSpacer_2;
+    QLabel *label_3;
+    QLineEdit *lineEditName;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_3;
     QHBoxLayout *horizontalLayout;
@@ -93,9 +94,9 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(717, 443);
-        MainWindow->setMinimumSize(QSize(717, 443));
-        MainWindow->setMaximumSize(QSize(717, 443));
+        MainWindow->resize(900, 443);
+        MainWindow->setMinimumSize(QSize(900, 443));
+        MainWindow->setMaximumSize(QSize(900, 443));
         action = new QAction(MainWindow);
         action->setObjectName(QStringLiteral("action"));
         centralWidget = new QWidget(MainWindow);
@@ -110,38 +111,42 @@ public:
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
-        label_3 = new QLabel(groupBox);
-        label_3->setObjectName(QStringLiteral("label_3"));
+        pushButtonLoad = new QPushButton(groupBox);
+        pushButtonLoad->setObjectName(QStringLiteral("pushButtonLoad"));
+        pushButtonLoad->setMinimumSize(QSize(171, 0));
 
-        gridLayout->addWidget(label_3, 0, 2, 1, 1);
+        gridLayout->addWidget(pushButtonLoad, 0, 0, 1, 1);
 
         labelName = new QLabel(groupBox);
         labelName->setObjectName(QStringLiteral("labelName"));
 
-        gridLayout->addWidget(labelName, 0, 1, 2, 1);
-
-        lineEditName = new QLineEdit(groupBox);
-        lineEditName->setObjectName(QStringLiteral("lineEditName"));
-        lineEditName->setMaximumSize(QSize(189, 16777215));
-
-        gridLayout->addWidget(lineEditName, 1, 2, 2, 1);
+        gridLayout->addWidget(labelName, 0, 1, 1, 3);
 
         pushButtonPath = new QPushButton(groupBox);
         pushButtonPath->setObjectName(QStringLiteral("pushButtonPath"));
         pushButtonPath->setMaximumSize(QSize(171, 16777215));
 
-        gridLayout->addWidget(pushButtonPath, 2, 0, 2, 1);
-
-        pushButtonLoad = new QPushButton(groupBox);
-        pushButtonLoad->setObjectName(QStringLiteral("pushButtonLoad"));
-        pushButtonLoad->setMinimumSize(QSize(171, 0));
-
-        gridLayout->addWidget(pushButtonLoad, 0, 0, 2, 1);
+        gridLayout->addWidget(pushButtonPath, 1, 0, 1, 1);
 
         labelPath = new QLabel(groupBox);
         labelPath->setObjectName(QStringLiteral("labelPath"));
 
-        gridLayout->addWidget(labelPath, 3, 1, 1, 1);
+        gridLayout->addWidget(labelPath, 1, 1, 1, 1);
+
+        horizontalSpacer_2 = new QSpacerItem(157, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        gridLayout->addItem(horizontalSpacer_2, 1, 2, 1, 1);
+
+        label_3 = new QLabel(groupBox);
+        label_3->setObjectName(QStringLiteral("label_3"));
+
+        gridLayout->addWidget(label_3, 1, 3, 1, 1);
+
+        lineEditName = new QLineEdit(groupBox);
+        lineEditName->setObjectName(QStringLiteral("lineEditName"));
+        lineEditName->setMaximumSize(QSize(189, 16777215));
+
+        gridLayout->addWidget(lineEditName, 1, 4, 1, 1);
 
 
         gridLayout_2->addWidget(groupBox, 0, 0, 1, 2);
@@ -345,7 +350,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 717, 26));
+        menuBar->setGeometry(QRect(0, 0, 900, 26));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
         MainWindow->setMenuBar(menuBar);
@@ -369,12 +374,12 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\320\237\321\200\320\265\320\276\320\261\321\200\320\260\320\267\320\276\320\262\320\260\320\275\320\270\320\265 \321\201\320\277\320\265\321\206\320\270\321\204\320\270\320\272\320\260\321\206\320\270\320\270 v.1.0.0.0", Q_NULLPTR));
         action->setText(QApplication::translate("MainWindow", "\320\236\320\277\320\270\321\201\320\260\320\275\320\270\320\265", Q_NULLPTR));
         groupBox->setTitle(QApplication::translate("MainWindow", "\320\222\321\213\320\261\320\276\321\200 \321\204\320\260\320\271\320\273\320\260", Q_NULLPTR));
-        label_3->setText(QApplication::translate("MainWindow", "\320\230\320\274\321\217 \320\263\320\265\320\275\320\265\321\200\320\270\321\200\321\203\320\265\320\274\320\276\320\263\320\276 \321\204\320\260\320\271\320\273\320\260:", Q_NULLPTR));
-        labelName->setText(QApplication::translate("MainWindow", "D:/projects/specification/spec/PHASE_FPGA_MAIN_01_REFDES.xlsx", Q_NULLPTR));
-        lineEditName->setText(QApplication::translate("MainWindow", "AA", Q_NULLPTR));
-        pushButtonPath->setText(QApplication::translate("MainWindow", "\320\237\321\203\321\202\321\214 \320\272 \321\201\320\276\321\205\321\200\320\260\320\275\320\265\320\275\320\275\320\276\320\274\321\203 \321\204\320\260\320\271\320\273\321\203", Q_NULLPTR));
         pushButtonLoad->setText(QApplication::translate("MainWindow", "\320\227\320\260\320\263\321\200\321\203\320\267\320\270\321\202\321\214 \321\204\320\260\320\271\320\273", Q_NULLPTR));
+        labelName->setText(QString());
+        pushButtonPath->setText(QApplication::translate("MainWindow", "\320\237\321\203\321\202\321\214 \320\272 \321\201\320\276\321\205\321\200\320\260\320\275\320\265\320\275\320\275\320\276\320\274\321\203 \321\204\320\260\320\271\320\273\321\203", Q_NULLPTR));
         labelPath->setText(QApplication::translate("MainWindow", "D:/projects/specification/spec/", Q_NULLPTR));
+        label_3->setText(QApplication::translate("MainWindow", "\320\230\320\274\321\217 \320\263\320\265\320\275\320\265\321\200\320\270\321\200\321\203\320\265\320\274\320\276\320\263\320\276 \321\204\320\260\320\271\320\273\320\260:", Q_NULLPTR));
+        lineEditName->setText(QApplication::translate("MainWindow", "AA", Q_NULLPTR));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\270 \321\201\320\277\320\265\321\206\320\270\321\204\320\270\320\272\320\260\321\206\320\270\320\270", Q_NULLPTR));
         label_4->setText(QApplication::translate("MainWindow", "\320\240\320\260\320\267\321\200\320\260\320\261\320\276\321\202\320\260\320\273:", Q_NULLPTR));
         lineEdit_Razrab->setText(QApplication::translate("MainWindow", "\320\240\321\213\320\261\320\260\320\272 \320\241.\320\222.", Q_NULLPTR));
