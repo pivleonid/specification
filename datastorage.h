@@ -8,7 +8,11 @@ struct TData{
 QString part;
 int counts; //кол-во
 QString notes;     //примечания
+TData& operator +(TData& newData){
+
+}
 };
+
 
 struct dataStorage{
 private:

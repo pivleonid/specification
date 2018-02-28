@@ -7,15 +7,25 @@
 #include "activeword.h"
 #include "activeexcel.h"
 #include <QTimer>
+#include "datastorage.h"
 
 namespace Ui {
+
 class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
+    //Т.к. QMap по умолчанию сортирует элементы по алфавиту
+    struct myMap{
+        QString key;
+        QList<TData> data;
+        void clear(){
+            key.clear();
+            data.clear();
+        }
+    };
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

@@ -270,26 +270,54 @@ QMap<QString, QString> MainWindow::readGroups(){
 }
 //-----------------------------------------------------------------
 QList<QStringList> MainWindow::searchKey(QMap<QString, QList<TData> > &boms, QMap<QString, QString> groups){
- QMap<QString, QList<TData> > allBom;
+
+    //Сортировка ключей по алфавиту
+    QStringList keySort;
+    foreach (auto var, boms.keys()) {
+    keySort << var;
+    }
+    qSort(keySort);
+
+
+
+    QList<myMap> allBom;
+myMap null;
  ui->textBrowser->setTextColor(Qt::red);
  ui->textBrowser->insertPlainText("Элементы со следующими RefDez отображены в разделе \"Прочие\":\n");
  ui->textBrowser->setTextColor(Qt::black);
  bool flag = false;
+ bool flagProch = false;
     foreach (auto key1, boms.keys()) {
         bool keyFound = false;
         foreach (auto key2, groups.keys()) {
             if(key1 == key2){
                 keyFound = true;
-                allBom[groups[key2]]; //копирую ключ
-                //копирую данные
-                allBom[groups[key2]].append( boms[key2]);
+                null.data.append(boms[key1]);
+                null.key.append(groups[key2]);
+                allBom.append(null);
+                null.clear();
                 break;
             }
         }
 
         if(keyFound == false){
-            allBom["Прочие"];
-            allBom["Прочие"].append( boms[key1]);
+            if(flagProch == false){
+                null.data.append(boms[key1]);
+                null.key.append("Прочие");
+                allBom.append(null);
+                null.clear();
+                flagProch = true;
+                ui->textBrowser->insertPlainText(key1 + "\n");
+                continue;
+            }
+            for (int i = 0; i < allBom.count(); i++) {
+                int count = allBom[i].key.indexOf("Прочие");
+                if(count >= 0){
+                    null.clear();
+                    null.data.append( boms[key1]);
+                    allBom[i].data.append(null.data);
+                }
+            }
             ui->textBrowser->insertPlainText(key1 + "\n");
             flag = true;
             }
@@ -297,30 +325,44 @@ QList<QStringList> MainWindow::searchKey(QMap<QString, QList<TData> > &boms, QMa
     if(flag == false)
     ui->textBrowser->insertPlainText("Неизвестных компонентов нет\n");
 
+    for (int z = 0; z < allBom.count(); z++) {
 
+        null.clear();
+        //Сортировка по partNumber'у
+        for(int i = 0 ; i < allBom[z].data.count()-1; i++){
+            for(int j = i + 1; j < allBom[z].data.count(); j++){
+                if(allBom[z].data[i].part > allBom[z].data[j].part){
+                    null.data.append(allBom[z].data[i]);
+                    allBom[z].data[i] = allBom[z].data[j] ;
+                    allBom[z].data[j] = null.data.at(0);
+                    null.clear();
+                }
+            }
+        }
+    }
 
     //теперь это дело надо перевести в QList<QStringList>  и засандалить в Word таблицу
     QList<QStringList> tableDat;
 int j = ui->lineEdit_Numeracia->text().toInt(); // число берется из gui
-    foreach (auto key, allBom.keys()) {
+    for(int i = 0; i < allBom.count(); i++) {
         QStringList per;
         per << "" << "" << "" << ""  << "" << "" << "";
         tableDat << per;
         per.clear();
-        per << "" << "" << "" << ""  << key << "" << "";
+        per << "" << "" << "" << ""  << allBom[i].key << "" << "";
         tableDat << per;
         per.clear();
         per << "" << "" << "" << ""  << "" << "" << "";
         tableDat << per;
         per.clear();
         //i == кол-во TData
-        for(int i = 0; i < allBom[key].count(); i++, j+=2){
+        for(int z = 0; z < allBom[i].data.count(); z++, j+=2){
             per << "" << "" ;
             per << QString::number(j);
             per << "" ;
-            per << allBom[key][i].part;
-            per << QString::number(allBom[key][i].counts);
-            per << allBom[key][i].notes;
+            per << allBom[i].data[z].part;
+            per << QString::number(allBom[i].data[z].counts);
+            per << allBom[i].data[z].notes;
             tableDat << per;
             per.clear();
             per << "" << "" << "" << ""  << "" << "" << "";
@@ -328,10 +370,10 @@ int j = ui->lineEdit_Numeracia->text().toInt(); // число берется и�
             per.clear();
           }
 }
-//
+
     //
     QList<QStringList> varList;// = tableDat; // шоб не похерить данные
-// в 6 и 4 ячейках слов должно быть не больше 32 и 18 соответственно
+// в 6 и 4 ячейках символов должно быть не больше 32 и 18
 //иначе word будет увеливать размер ячеек.
     for(int i = 0; i < tableDat.count(); i++){ //--------------------------------------------------------------------begin
     QString text = tableDat[i].at(6);
@@ -342,7 +384,7 @@ int j = ui->lineEdit_Numeracia->text().toInt(); // число берется и�
             continue;
         }
     }
-    QString count = tableDat[i].at(5); // кол-во компоненов
+    QString count = tableDat[i].at(5); // кол-во компоненов, вставляется в последнюю строчку
     QString num = tableDat[i].at(2);   // порядковый номер в спецификации
      QStringList textL, textLout, noteL, noteLout;
      textL = text.split(" ");
@@ -377,23 +419,32 @@ int j = ui->lineEdit_Numeracia->text().toInt(); // число берется и�
      QList<QStringList> newline;
      QStringList per;
      //Где больше строк?
-     int countNote = noteLout.count();
-     int countText = textLout.count();
+     int countNote = noteLout.count(); // PartNumber
+     int countText = textLout.count(); //refDez- последняя строчка в колонке "примечание"
      if(countNote > countText){
+         int skip = countNote - countText; //сколько строк надо пропустить
        for(int i = 0; i < noteLout.count(); i++ ){
            if(i != 0)
                per << "" << "" <<"" << "";
            if(i == 0)
                per << "" << "" << num << "";
            per << noteLout[i];
-           if( i == 0)
+           //
+           if( i == noteLout.count() - 1)
                per << count;
-           if( i != 0)
+
+           if( i != noteLout.count() -1)
                per << "";
-           if(i < countText)
-               per <<textLout[i];
-           if(i >= countText)
+           //
+           if(i >= skip)
+               per <<textLout[i - skip];
+           if(i < skip)
                per << "";
+           //
+//           if(i < countText)
+//               per <<textLout[i];
+//           if(i >= countText)
+//               per << "";
            newline << per;
            per.clear();
        }
@@ -412,9 +463,9 @@ int j = ui->lineEdit_Numeracia->text().toInt(); // число берется и�
              if(i >= countNote)
                  per << "";
              //6
-             if( i == 0)
+             if( i == textLout.count() - 1)
                  per << count;
-             if( i != 0)
+             if( i != textLout.count() -1)
                  per << "";
              //7
              per <<textLout[i];
@@ -492,7 +543,7 @@ void MainWindow::startOperation(){
 QMap <QString, QList<TData> >  allBom;
 ui->progressBar->setValue(0);
 QApplication::processEvents();
-allBom = readExcel(100);
+allBom = readExcel();
 ui->progressBar->setValue(20);
 QApplication::processEvents();
 if(allBom.isEmpty() == true){
