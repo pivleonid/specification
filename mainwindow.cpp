@@ -193,9 +193,9 @@ QMap <QString, QList<TData> > MainWindow::readExcel(int lines){
                     && manufacturerN.toString() == "" && descriptionN.toString() == "")
                 break;
             partNumberString.append(partNumberN.toString());
-            partNumberString.append(", ");
+            partNumberString.append(", /");
             partNumberString.append(descriptionN.toString());
-            partNumberString.append(", " );
+            partNumberString.append(", /" );
             partNumberString.append(manufacturerN.toString());
 
             storage.insert(refN.toString(), partNumberString, qtyN.toInt() );
@@ -233,9 +233,9 @@ QMap <QString, QList<TData> > MainWindow::readExcel(int lines){
                     && manufacturerN.toString() == "" && descriptionN.toString() == "")
                 break;
             partNumberString.append(partNumberN.toString());
-            partNumberString.append(", ");
+            partNumberString.append(", /");
             partNumberString.append(descriptionN.toString());
-            partNumberString.append(", " );
+            partNumberString.append(", /" );
             partNumberString.append(manufacturerN.toString());
 
             storage.insert(refN.toString(), partNumberString, qtyN.toInt() );
@@ -271,19 +271,12 @@ QMap<QString, QString> MainWindow::readGroups(){
 //-----------------------------------------------------------------
 QList<QStringList> MainWindow::searchKey(QMap<QString, QList<TData> > &boms, QMap<QString, QString> groups){
 
-    //Сортировка ключей по алфавиту
-    QStringList keySort;
-    foreach (auto var, boms.keys()) {
-    keySort << var;
-    }
-    qSort(keySort);
-
 
 
     QList<myMap> allBom;
 myMap null;
  ui->textBrowser->setTextColor(Qt::red);
- ui->textBrowser->insertPlainText("Элементы со следующими RefDez отображены в разделе \"Прочие\":\n");
+ ui->textBrowser->insertPlainText("Элементы c неизвестными RefDez отображены в разделе \"Прочие\":\n");
  ui->textBrowser->setTextColor(Qt::black);
  bool flag = false;
  bool flagProch = false;
@@ -340,11 +333,27 @@ myMap null;
             }
         }
     }
+    //Прочие надо перенести на последнее место
+    //На каком месте "Прочие"?
+    for (int i =0; i < allBom.count(); i++){
+        int prochCount = allBom[i].key.indexOf("Прочие");
+        if(prochCount >= 0){
+            if(i == allBom.count() -1)
+                break; //прочее на последнем месте
+            // i - это место "Прочих"
+            null.clear();
+            null = allBom[i];
+            allBom[i].clear();
+            allBom.append(null);
+        }
+    }
 
     //теперь это дело надо перевести в QList<QStringList>  и засандалить в Word таблицу
     QList<QStringList> tableDat;
 int j = ui->lineEdit_Numeracia->text().toInt(); // число берется из gui
     for(int i = 0; i < allBom.count(); i++) {
+        if(allBom[i].key == "")
+            continue;
         QStringList per;
         per << "" << "" << "" << ""  << "" << "" << "";
         tableDat << per;
@@ -380,6 +389,19 @@ int j = ui->lineEdit_Numeracia->text().toInt(); // число берется и�
     QString note = tableDat[i].at(4);
     if(text == ""  || (text.count() < 18)){
         if(note == ""  || (note.count() < 32)){
+
+         //удалить разделяющие символы '/'
+         for(int j = 0; j < tableDat[i].count(); j++){
+             //tableDat[i][j] это QString
+             m1:
+             int fix = tableDat[i][j].indexOf('/');
+             if(fix >= 0){
+                 tableDat[i][j].remove(fix, 1);
+                 goto m1;
+             }
+
+
+         }
          varList.append(tableDat[i]);
             continue;
         }
@@ -388,7 +410,13 @@ int j = ui->lineEdit_Numeracia->text().toInt(); // число берется и�
     QString num = tableDat[i].at(2);   // порядковый номер в спецификации
      QStringList textL, textLout, noteL, noteLout;
      textL = text.split(" ");
-     noteL = note.split(" ");
+
+     for (int i = 0; i < textL.count(); i++)
+         textL[i].append(" ");
+     QString v = textL[textL.count()- 1];
+    v.remove(v.count() - 1, v.count());
+    textL[textL.count()- 1] = v;
+     noteL = note.split("/");
      textLout.append("");// заполняю пустыми значениями, чтобы можно было обратиться по индексу
      noteLout.append("");
      for(int i = 0, j = 0; i < textL.count(); i++){
@@ -418,61 +446,34 @@ int j = ui->lineEdit_Numeracia->text().toInt(); // число берется и�
      }
      QList<QStringList> newline;
      QStringList per;
+     //ЧТО ЗА УЖОС ТУТ ТВОРИТСЯ? см картинку пояснение.jpg
      //Где больше строк?
      int countNote = noteLout.count(); // PartNumber
      int countText = textLout.count(); //refDez- последняя строчка в колонке "примечание"
-     if(countNote > countText){
-         int skip = countNote - countText; //сколько строк надо пропустить
-       for(int i = 0; i < noteLout.count(); i++ ){
-           if(i != 0)
-               per << "" << "" <<"" << "";
-           if(i == 0)
-               per << "" << "" << num << "";
-           per << noteLout[i];
-           //
-           if( i == noteLout.count() - 1)
-               per << count;
-
-           if( i != noteLout.count() -1)
-               per << "";
-           //
-           if(i >= skip)
-               per <<textLout[i - skip];
-           if(i < skip)
-               per << "";
-           //
-//           if(i < countText)
-//               per <<textLout[i];
-//           if(i >= countText)
-//               per << "";
-           newline << per;
-           per.clear();
-       }
-     }
-     else{
-         for(int i = 0; i < textLout.count(); i++ ){
-
-             //1-4
-             if(i != 0)
-                     per << "" << "" <<"" << "";
-             if(i == 0)
-                     per << "" << "" << num << "";
-             //5
-             if(i < countNote)
-                 per << noteLout[i];
-             if(i >= countNote)
-                 per << "";
-             //6
-             if( i == textLout.count() - 1)
-                 per << count;
-             if( i != textLout.count() -1)
-                 per << "";
-             //7
-             per <<textLout[i];
-             newline << per;
-             per.clear();
+     //
+     for(int i = 0; i < noteLout.count(); i++ ){
+         if(i != 0)
+             per << "" << "" <<"" << "";
+         if(i == 0)
+             per << "" << "" << num << "";
+         per << noteLout[i];
+         //
+         if( i == noteLout.count() - 1){
+             per << count;
+             per << textLout[0];
          }
-       }
+         if( i != noteLout.count() -1)
+             per << "" << "";
+         //
+         newline << per;
+         per.clear();
+     }
+     for(int i = 1; i < textLout.count(); i++ ){
+         per << "" << "" <<"" << "" << "" << "" << textLout[i];
+         newline << per;
+         per.clear();
+     }
+     //-------------------------
 
 
 //исходную строку надо заменить на стройки newLine

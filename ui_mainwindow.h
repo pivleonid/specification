@@ -371,7 +371,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\320\237\321\200\320\265\320\276\320\261\321\200\320\260\320\267\320\276\320\262\320\260\320\275\320\270\320\265 \321\201\320\277\320\265\321\206\320\270\321\204\320\270\320\272\320\260\321\206\320\270\320\270 v.1.0.0.0", Q_NULLPTR));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "\320\237\321\200\320\265\320\276\320\261\321\200\320\260\320\267\320\276\320\262\320\260\320\275\320\270\320\265 \321\201\320\277\320\265\321\206\320\270\321\204\320\270\320\272\320\260\321\206\320\270\320\270 v.1.1.1.0", Q_NULLPTR));
         action->setText(QApplication::translate("MainWindow", "\320\236\320\277\320\270\321\201\320\260\320\275\320\270\320\265", Q_NULLPTR));
         groupBox->setTitle(QApplication::translate("MainWindow", "\320\222\321\213\320\261\320\276\321\200 \321\204\320\260\320\271\320\273\320\260", Q_NULLPTR));
         pushButtonLoad->setText(QApplication::translate("MainWindow", "\320\227\320\260\320\263\321\200\321\203\320\267\320\270\321\202\321\214 \321\204\320\260\320\271\320\273", Q_NULLPTR));
@@ -392,11 +392,11 @@ public:
         label_8->setText(QApplication::translate("MainWindow", "\320\244\320\270\321\200\320\274\320\260- \320\270\320\267\320\263\320\276\321\202\320\276\320\262\320\270\321\202\320\265\320\273\321\214:", Q_NULLPTR));
         lineEdit_FirmaIzgotov->setText(QApplication::translate("MainWindow", "\320\244\320\223\320\243\320\237 \320\235\320\237\320\237 \"\320\223\320\260\320\274\320\274\320\260\"", Q_NULLPTR));
         label_9->setText(QApplication::translate("MainWindow", "\320\224\320\265\321\206\320\270\320\274\320\260\320\273\321\214\320\275\321\213\320\271 \320\275\320\276\320\274\320\265\321\200 \320\270\320\267\320\264\320\265\320\273\320\270\321\217:", Q_NULLPTR));
-        lineEdit_DecimalNumber->setText(QApplication::translate("MainWindow", "\320\221\320\256\320\233\320\230.48745.005 \320\237\320\255\320\227", Q_NULLPTR));
+        lineEdit_DecimalNumber->setText(QApplication::translate("MainWindow", "\320\221\320\256\320\233\320\230.48745.005 ", Q_NULLPTR));
         label_10->setText(QApplication::translate("MainWindow", "\320\235\320\260\320\270\320\274\320\265\320\275\320\276\320\262\320\260\320\275\320\270\320\265 1:", Q_NULLPTR));
         lineEdit_Naimenovanie1->setText(QApplication::translate("MainWindow", "\320\237\320\273\320\260\321\202\320\260 \321\202\321\200\320\260\320\272\321\202\320\276\320\262\320\276\320\263\320\276 \321\203\321\201\320\270\320\273\320\270\321\202\320\265\320\273\321\217", Q_NULLPTR));
         label_11->setText(QApplication::translate("MainWindow", "\320\235\320\260\320\270\320\274\320\265\320\275\320\276\320\262\320\260\320\275\320\270\320\265 2:", Q_NULLPTR));
-        lineEdit_Naimenovanie2->setText(QApplication::translate("MainWindow", "\320\241\320\277\320\265\321\206\320\270\321\204\320\270\320\272\320\260\321\206\320\270\321\217", Q_NULLPTR));
+        lineEdit_Naimenovanie2->setText(QString());
         label_12->setText(QApplication::translate("MainWindow", "\320\235\320\260\321\207\320\260\320\273\320\276 \320\275\321\203\320\274\320\265\321\200\320\260\321\206\320\270\320\270:", Q_NULLPTR));
         lineEdit_Numeracia->setText(QApplication::translate("MainWindow", "20", Q_NULLPTR));
         pushButtonStart->setText(QApplication::translate("MainWindow", "\320\241\321\202\320\260\321\200\321\202", Q_NULLPTR));

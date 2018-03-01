@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Преобразование спецификации v.1.0.0.0</string>
+   <string>Преобразование спецификации v.1.1.1.0</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -223,7 +223,7 @@
            <item>
             <widget class="QLineEdit" name="lineEdit_DecimalNumber">
              <property name="text">
-              <string>БЮЛИ.48745.005 ПЭЗ</string>
+              <string>БЮЛИ.48745.005 </string>
              </property>
             </widget>
            </item>
@@ -259,7 +259,7 @@
            <item>
             <widget class="QLineEdit" name="lineEdit_Naimenovanie2">
              <property name="text">
-              <string>Спецификация</string>
+              <string/>
              </property>
             </widget>
            </item>
