@@ -201,7 +201,7 @@
            <item>
             <widget class="QLineEdit" name="lineEdit_FirmaIzgotov">
              <property name="text">
-              <string>ФГУП НПП &quot;Гамма&quot;</string>
+              <string>Организация</string>
              </property>
             </widget>
            </item>
@@ -337,7 +337,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

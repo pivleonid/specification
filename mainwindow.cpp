@@ -5,6 +5,8 @@
 #include <QTextCodec>
 #include <QSettings>
 
+#include "math.h"
+
 
 
 
